@@ -1,0 +1,82 @@
+
+//
+$width-size: 300px;
+$height-size: 200px;
+
+//
+$praace-width-size: 100px;
+
+//昭和
+$shyowa-name : "shyowa";
+$shyowa-start : 1926;
+$shyowa-end : 1988;
+//平成
+$heisei-name : "heisei";
+$heisei-start : 1989;
+$heisei-end : 2018;
+//令和
+$reiwa-name : "reiwa";
+$reiwa-start : 2019;
+$reiwa-end : 2020;
+
+.wrap{
+  width: 100%;
+  display: flex;
+}
+
+.wareki{
+  width: $width-size;
+  height: $height-size;
+}
+
+.tens_place{
+  margin-top: 15px;
+  width: $praace-width-size;
+  height: $height-size;
+}
+.ones_place{
+  @extend .tens_place;
+}
+
+@mixin num_img_change($place){
+  background-image: url("./img/#{$place}.png");
+  background-repeat: no-repeat;
+}
+
+@mixin wareki_num_change($start-year,$place,$current-year){
+    @if $place == 10{
+      $tens-place: floor(($current-year - $start-year) / 10);
+      @include num_img_change($tens-place);
+    }
+    @else {
+      $ones-place:  ($current-year - $start-year) % 10;
+      @include num_img_change($ones-place);
+    }
+}
+
+@mixin wareki_change($current-year,$wareki-name,$year-start){
+  @media (min-width: #{$current-year}px) and (max-width: #{$current-year}px) {
+    .wareki{
+      background-image: url("./img/#{$wareki-name}.png");
+      background-repeat: no-repeat;
+     }
+       .tens_place{
+         @include wareki_num_change($year-start - 1,10,$current-year);
+       }
+       .ones_place{
+         @include wareki_num_change($year-start - 1,1,$current-year);
+       }
+  }
+}
+
+@for $i from $shyowa-start through $reiwa-end {
+  @if $i >= $shyowa-start and $i <= $shyowa-end {
+    @include wareki_change($i,$shyowa-name,$shyowa-start);
+  }
+  @else if $i >= $heisei-start and $i <= $heisei-end {
+    @include wareki_change($i,$heisei-name,$heisei-start);
+  }
+  @else if $i >= $reiwa-start{
+    @include wareki_change($i,$reiwa-name,$reiwa-start);
+  }
+}
